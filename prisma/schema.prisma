@@ -9,23 +9,37 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
+  id    Int     @id @default(autoincrement())
   email String  @unique
   name  String?
   posts Post[]
 }
 
 model Post {
-  id        Int      @default(autoincrement()) @id
+  id        Int      @id @default(autoincrement())
   title     String
   content   String?
   published Boolean? @default(false)
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
+}
+
+model Subapp {
+  id         Int       @id @default(autoincrement())
+  subappName String
+  versions   Version[]
+}
+
+model Version {
+  id           Int     @id @default(autoincrement())
+  versionName  String
+  versionEntry String
+  subapp       Subapp? @relation(fields: [subappId], references: [id])
+  subappId     Int?
 }
